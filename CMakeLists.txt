@@ -14,7 +14,7 @@
 # Testing is not included as part of this build as extra packages are
 # required (e.g. Catch2).
 
-cmake_minimum_required(VERSION 3.18.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.21.0 FATAL_ERROR)
 
 project(fhicl-cpp-standalone VERSION 4.18.01)
 
@@ -46,6 +46,7 @@ foreach(I RANGE 1 ${MAX_INDEX})
     DEPENDS ${DEPENDENCY}
     LIST_SEPARATOR |
     CMAKE_ARGS --preset=default
+               -DCMAKE_CXX_STANDARD=17
                -DCMAKE_PREFIX_PATH=${PREFIX_PATH}
                -DBUILD_TESTING:BOOL=FALSE
                -DCMAKE_INSTALL_PREFIX:STRING=${TOP_BUILD_DIR}/${PACKAGE_TO_BUILD}-install
