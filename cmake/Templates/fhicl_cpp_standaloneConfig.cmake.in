@@ -1,0 +1,50 @@
+@PACKAGE_INIT@
+
+set(fhicl_cpp_standalone_VERSION @PROJECT_VERSION@)
+
+find_dependency(Boost 1.75 COMPONENTS filesystem REQUIRED)
+find_dependency(SQLite3 3 REQUIRED)
+find_dependency(TBB 2020 REQUIRED)
+
+include(${CMAKE_CURRENT_LIST_DIR}/fhicl_cpp_standalone-targets.cmake)
+
+set(fhicl_cpp_standalone_FOUND TRUE)
+
+if(NOT TARGET fhiclcpp::standalone)
+  message(WARNING "Expected to find target fhiclcpp::standalone in ${CMAKE_CURRENT_LIST_DIR}/fhicl_cpp_standalone-targets.cmake")
+  set(fhicl_cpp_standalone_FOUND FALSE)
+  return()
+endif()
+
+get_filename_component(fhicl_cpp_standalone_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+#possibly a bit redundant, but make sure that we can find a random smattering of dependent libraries
+#that we can't set up in a modern CMake way consistently with including this wrapper package via CPM
+find_path(fhicl_cpp_standalone_INCLUDE_DIR
+  NAMES fhiclcpp/ParameterSet.h
+  PATHS ${fhicl_cpp_standalone_CMAKE_DIR}/../../../include
+)
+find_path(fhicl_cpp_standalone_BIN_DIR
+  NAMES fhicl-dump
+  PATHS ${fhicl_cpp_standalone_CMAKE_DIR}/../../../bin
+)
+find_path(fhicl_cpp_standalone_LIB_DIR
+  NAMES libfhiclcpp.so
+  PATHS ${fhicl_cpp_standalone_CMAKE_DIR}/../../../lib
+)
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(fhicl_cpp_standalone
+  REQUIRED_VARS 
+    fhicl_cpp_standalone_INCLUDE_DIR 
+    fhicl_cpp_standalone_BIN_DIR
+    fhicl_cpp_standalone_LIB_DIR
+  VERSION_VAR
+    fhicl_cpp_standalone_VERSION
+)
+
+message(STATUS "fhicl-cpp-standalone Found:")
+message(STATUS "--  fhicl_cpp_standalone_INCLUDE_DIR: ${fhicl_cpp_standalone_INCLUDE_DIR}")
+message(STATUS "--      fhicl_cpp_standalone_BIN_DIR: ${fhicl_cpp_standalone_BIN_DIR}")
+message(STATUS "--      fhicl_cpp_standalone_LIB_DIR: ${fhicl_cpp_standalone_LIB_DIR}")
+message(STATUS "--      fhicl_cpp_standalone_VERSION: ${fhicl_cpp_standalone_VERSION}")
