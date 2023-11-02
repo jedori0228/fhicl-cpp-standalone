@@ -60,6 +60,7 @@ foreach(PACKAGE_TO_BUILD ${PACKAGES})
     GIT_REPOSITORY https://github.com/luketpickering/${PACKAGE_TO_BUILD}.git
     GIT_TAG FHICLCPP_SUITE_v${FHICLCPP_SUITE_VERSION}
     DEPENDS ${PREVIOUS_PACKAGE}
+    STEP_TARGETS install
     CMAKE_ARGS --preset=default
                -DCMAKE_CXX_STANDARD=17
                -DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX}
@@ -78,7 +79,14 @@ FILE(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/lib)
 # The target that we're going to construct. We can't do this properly because
 # cetlib's overrides will mangle with sensible usage of CPM or FetchContent_MakeAvailable
 add_library(fhicl_cpp_standalone INTERFACE)
-add_dependencies(fhicl_cpp_standalone fhicl-cpp-install)
+
+set(FHICL_CPP_INSTALL_STEP_TARGET fhicl-cpp-install)
+
+if(NOT TARGET ${FHICL_CPP_INSTALL_STEP_TARGET})
+  message(FATAL_ERROR "FHICL_CPP_INSTALL_STEP_TARGET: ${FHICL_CPP_INSTALL_STEP_TARGET} does not exist")
+endif()
+
+add_dependencies(fhicl_cpp_standalone ${FHICL_CPP_INSTALL_STEP_TARGET})
 target_include_directories(fhicl_cpp_standalone INTERFACE 
   $<BUILD_INTERFACE:${CMAKE_INSTALL_PREFIX}/include> 
   $<INSTALL_INTERFACE:include>)
@@ -86,7 +94,7 @@ target_link_directories(fhicl_cpp_standalone INTERFACE
   $<BUILD_INTERFACE:${CMAKE_INSTALL_PREFIX}/lib> 
   $<INSTALL_INTERFACE:lib>)
 target_link_libraries(fhicl_cpp_standalone INTERFACE 
-  -lfhiclcpp -lcetlib_sqlite SQLite::SQLite3 -lcetlib -lhep_concurrency Boost::filesystem TBB::tbb)
+  -lfhiclcpp -lcetlib_except -lcetlib_sqlite SQLite::SQLite3 -lcetlib -lhep_concurrency Boost::filesystem TBB::tbb)
 set_target_properties(fhicl_cpp_standalone PROPERTIES EXPORT_NAME standalone)
 
 add_library(fhiclcpp::standalone ALIAS fhicl_cpp_standalone)
