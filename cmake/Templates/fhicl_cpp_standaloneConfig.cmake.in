@@ -2,6 +2,8 @@
 
 set(fhicl_cpp_standalone_VERSION @PROJECT_VERSION@)
 
+include(CMakeFindDependencyMacro)
+
 find_dependency(Boost 1.75 COMPONENTS filesystem REQUIRED)
 find_dependency(SQLite3 3 REQUIRED)
 find_dependency(TBB 2020 REQUIRED)
