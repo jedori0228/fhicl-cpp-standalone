@@ -24,6 +24,15 @@ project(fhicl_cpp_standalone VERSION ${FHICLCPP_SUITE_VERSION_DOT})
 set(CMAKE_CXX_STANDARD 17)
 set(CXX_STANDARD_REQUIRED ON)
 
+#Changes default install path to be a subdirectory of the build dir.
+#Can set build dir at configure time with -DCMAKE_INSTALL_PREFIX=/install/path
+if(CMAKE_INSTALL_PREFIX STREQUAL "" OR CMAKE_INSTALL_PREFIX STREQUAL
+  "/usr/local")
+  set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/${CMAKE_SYSTEM_NAME}")
+elseif(NOT DEFINED CMAKE_INSTALL_PREFIX)
+  set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/${CMAKE_SYSTEM_NAME}")
+endif()
+
 #lets use CPM instead of ExternalProject_Add as it plays better with
 #finding existing binary releases.
 # file(
@@ -122,6 +131,10 @@ install(EXPORT fhicl_cpp_standalone-targets
 install(FILES "${PROJECT_BINARY_DIR}/fhicl_cpp_standaloneConfigVersion.cmake"
               "${PROJECT_BINARY_DIR}/fhicl_cpp_standaloneConfig.cmake"
         DESTINATION lib/cmake/fhicl_cpp_standalone)
+configure_file(${CMAKE_CURRENT_LIST_DIR}/cmake/Templates/setup.fhicl_cpp_standalone.sh.in 
+  ${PROJECT_BINARY_DIR}/setup.fhicl_cpp_standalone.sh @ONLY)
+install(PROGRAMS ${PROJECT_BINARY_DIR}/setup.fhicl_cpp_standalone.sh DESTINATION bin)
+
 
 
 if(TESTS_ENABLED)
