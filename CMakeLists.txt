@@ -66,7 +66,7 @@ set(PREVIOUS_PACKAGE cetmodules)
 foreach(PACKAGE_TO_BUILD ${PACKAGES})
   ExternalProject_Add(${PACKAGE_TO_BUILD}
     PREFIX ${PACKAGE_TO_BUILD}
-    GIT_REPOSITORY https://github.com/luketpickering/${PACKAGE_TO_BUILD}.git
+    GIT_REPOSITORY https://github.com/art-framework-suite/${PACKAGE_TO_BUILD}.git
     GIT_TAG FHICLCPP_SUITE_v${FHICLCPP_SUITE_VERSION}
     DEPENDS ${PREVIOUS_PACKAGE}
     STEP_TARGETS install
